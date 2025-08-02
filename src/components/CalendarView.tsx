@@ -2,56 +2,66 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TodoItem from "./TodoItem"; // Importiere die neue Komponente
 
-// Typ-Definition für ein Kalender-Event (kannst du nach Bedarf erweitern)
-interface CalendarEvent {
-  id: string;
-  summary: string;
-  start: {
-    dateTime: string;
-  };
-}
+// Typ-Definition für ein Todo
+type Todo = {
+  id: number;
+  title: string;
+  is_completed: boolean;
+  // Füge hier weitere Felder hinzu, falls du sie brauchst
+};
 
 export default function CalendarView() {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchTodos = async () => {
       try {
+        // Die API-Route ruft die Daten jetzt aus deiner DB ab
         const response = await fetch("/api/get-events");
         if (!response.ok) {
-          throw new Error("Fehler beim Laden der Termine");
+          throw new Error("Fehler beim Laden der Todos vom Server");
         }
-        const data: CalendarEvent[] = await response.json();
-        setEvents(data);
-      } catch (error) {
-        console.error(error);
+        const data: Todo[] = await response.json();
+        setTodos(data);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Ein unbekannter Fehler ist aufgetreten"
+        );
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchEvents();
+
+    fetchTodos();
   }, []);
 
-  useEffect(() => {
-    console.log("fetched events:", events);
-  }, [events]);
+  if (loading) {
+    return <p>Lade Todos...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   return (
-    <div className="w-full max-w-4xl mb-8">
-      <h2 className="text-2xl font-semibold mb-4">Anstehende Termine</h2>
-      {loading ? (
-        <p>Lade Termine...</p>
-      ) : (
-        <ul className="space-y-2">
-          {events.map((event) => (
-            <li key={event.id} className="p-2 bg-gray-700 rounded">
-              <strong>{event.summary}</strong> -{" "}
-              {new Date(event.start.dateTime).toLocaleString("de-DE")}
-            </li>
+    <div className="w-full max-w-2xl">
+      <h2 className="text-2xl font-semibold mb-4">Deine Aufgaben</h2>
+      {todos.length > 0 ? (
+        <ul className="space-y-3">
+          {/* Hier wird die TodoItem-Komponente für jedes Todo verwendet */}
+          {todos.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
+      ) : (
+        <p>Keine anstehenden Aufgaben gefunden.</p>
       )}
     </div>
   );
