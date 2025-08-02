@@ -55,7 +55,6 @@ export default function CalendarView() {
       <h2 className="text-2xl font-semibold mb-4">Deine Aufgaben</h2>
       {todos.length > 0 ? (
         <ul className="space-y-3">
-          {/* Hier wird die TodoItem-Komponente für jedes Todo verwendet */}
           {todos.map((todo) => (
             <TodoItem key={todo.id} todo={todo} />
           ))}
