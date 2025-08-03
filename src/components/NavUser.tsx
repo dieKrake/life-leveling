@@ -5,7 +5,6 @@ import LogoutButton from "./LogoutButton";
 
 export default async function NavUser() {
   const supabase = createServerComponentClient({ cookies });
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -18,7 +17,9 @@ export default async function NavUser() {
           <LogoutButton />
         </div>
       ) : (
-        <LoginButton />
+        <div className="flex items-center h-full">
+          <LoginButton />
+        </div>
       )}
     </div>
   );
