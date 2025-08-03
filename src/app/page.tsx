@@ -1,9 +1,11 @@
+import HeroSection from "@/components/HeroSection";
+import Navbar from "@/components/Navbar";
+
 export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-8">Startseite</h1>
-      <h2>Navigation:</h2>
-      <a href="/calendar">Kalender</a>
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <Navbar />
+      <HeroSection />
     </main>
   );
 }

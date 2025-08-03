@@ -52,7 +52,9 @@ export default function CalendarView() {
 
   return (
     <div className="w-full max-w-2xl">
-      <h2 className="text-2xl font-semibold mb-4">Deine Aufgaben</h2>
+      <h2 className="text-2xl font-semibold mb-4">
+        Deine Aufgaben aus dem Kalender
+      </h2>
       {todos.length > 0 ? (
         <ul className="space-y-3">
           {todos.map((todo) => (
