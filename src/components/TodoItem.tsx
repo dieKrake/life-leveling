@@ -3,37 +3,35 @@
 
 import { useState, useEffect } from "react"; // useState und useEffect importieren
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-
-// Typ-Definition für ein Todo, passend zu deiner Datenbank-Tabelle
-type Todo = {
-  id: number;
-  title: string;
-  is_completed: boolean;
-};
+import { Todo } from "@/types";
 
 export default function TodoItem({ todo }: { todo: Todo }) {
   const supabase = createClientComponentClient();
-
-  // Lokaler State für die Checkbox, um sofortiges Feedback zu geben
   const [isChecked, setIsChecked] = useState(todo.is_completed);
 
-  // Synchronisiert den lokalen State, falls sich die übergebenen Props ändern
   useEffect(() => {
     setIsChecked(todo.is_completed);
   }, [todo.is_completed]);
 
   const handleToggleComplete = async () => {
-    // 1. UI sofort aktualisieren (Optimistic Update)
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
 
-    // 2. Datenbank im Hintergrund aktualisieren
+    // Update the todo in local storage
+    const todos = JSON.parse(localStorage.getItem("todos") || "[]");
+    const updatedTodos = todos.map((t: Todo) => {
+      if (t.id === todo.id) {
+        return { ...t, is_completed: newCheckedState };
+      }
+      return t;
+    });
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
     const { error } = await supabase
       .from("todos")
       .update({ is_completed: newCheckedState })
       .eq("id", todo.id);
 
-    // 3. Bei einem Fehler die UI-Änderung zurücksetzen
     if (error) {
       console.error("Fehler beim Aktualisieren des Todos:", error);
       setIsChecked(!newCheckedState);
@@ -49,7 +47,6 @@ export default function TodoItem({ todo }: { todo: Todo }) {
         onChange={handleToggleComplete}
       />
       <span className={isChecked ? "line-through text-gray-500" : ""}>
-        {" "}
         {todo.title}
       </span>
     </li>
