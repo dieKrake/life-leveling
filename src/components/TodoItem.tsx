@@ -36,7 +36,7 @@ export default function TodoItem({ todo }: { todo: Todo }) {
     // 3. Bei einem Fehler die UI-Änderung zurücksetzen
     if (error) {
       console.error("Fehler beim Aktualisieren des Todos:", error);
-      setIsChecked(!newCheckedState); // Setzt den Haken auf den ursprünglichen Zustand zurück
+      setIsChecked(!newCheckedState);
     }
   };
 
@@ -45,12 +45,11 @@ export default function TodoItem({ todo }: { todo: Todo }) {
       <input
         type="checkbox"
         className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-3"
-        checked={isChecked} // Bindung an den lokalen State
+        checked={isChecked}
         onChange={handleToggleComplete}
       />
       <span className={isChecked ? "line-through text-gray-500" : ""}>
         {" "}
-        {/* Bindung an den lokalen State */}
         {todo.title}
       </span>
     </li>

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TodoItem from "./TodoItem"; // Importiere die neue Komponente
+import TodoItem from "./TodoItem";
 
 // Typ-Definition für ein Todo
 type Todo = {
