@@ -6,15 +6,13 @@ import TodoItem from "./TodoItem";
 import type { Todo } from "@/types";
 
 export default function CalendarView() {
-  // KEINE FETCHER-FUNKTION MEHR NÖTIG - SWR NUTZT DEN GLOBALEN
-  const { data: todos, error, isLoading } = useSWR<Todo[]>("/api/get-events"); // Nur der Key wird übergeben
+  const { data: todos, error, isLoading } = useSWR<Todo[]>("/api/get-events");
 
   if (isLoading) {
     return <p>Lade Todos...</p>;
   }
 
   if (error) {
-    // Du kannst hier optional immer noch eine lokale Fehlermeldung anzeigen
     return <p className="text-red-500">Fehler: {error.message}</p>;
   }
 

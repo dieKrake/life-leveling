@@ -1,9 +1,12 @@
 // src/components/TodoItem.tsx
 "use client";
 
-import { useState, useEffect } from "react"; // useState und useEffect importieren
+import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Todo } from "@/types";
+import type { Todo } from "@/types";
+
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export default function TodoItem({ todo }: { todo: Todo }) {
   const supabase = createClientComponentClient();
@@ -13,42 +16,37 @@ export default function TodoItem({ todo }: { todo: Todo }) {
     setIsChecked(todo.is_completed);
   }, [todo.is_completed]);
 
-  const handleToggleComplete = async () => {
-    const newCheckedState = !isChecked;
-    setIsChecked(newCheckedState);
-
-    // Update todos in local storage
-    const todos = JSON.parse(localStorage.getItem("todos") || "[]");
-    const updatedTodos = todos.map((t: Todo) => {
-      if (t.id === todo.id) {
-        return { ...t, is_completed: newCheckedState };
-      }
-      return t;
-    });
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+  const handleToggleComplete = async (checked: boolean) => {
+    setIsChecked(checked);
 
     const { error } = await supabase
       .from("todos")
-      .update({ is_completed: newCheckedState })
+      .update({ is_completed: checked })
       .eq("id", todo.id);
 
     if (error) {
       console.error("Fehler beim Aktualisieren des Todos:", error);
-      setIsChecked(!newCheckedState);
+      setIsChecked(!checked);
     }
   };
 
+  const todoId = `todo-${todo.id}`;
+
   return (
-    <li className="flex items-center p-2 bg-gray-800 rounded-md">
-      <input
-        type="checkbox"
-        className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-3"
+    <li className="flex items-center space-x-2 p-3 border rounded-md bg-card">
+      <Checkbox
+        id={todoId}
         checked={isChecked}
-        onChange={handleToggleComplete}
+        onCheckedChange={handleToggleComplete}
       />
-      <span className={isChecked ? "line-through text-gray-500" : ""}>
+      <Label
+        htmlFor={todoId}
+        className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+          isChecked ? "line-through text-muted-foreground" : ""
+        }`}
+      >
         {todo.title}
-      </span>
+      </Label>
     </li>
   );
 }
