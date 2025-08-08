@@ -4,6 +4,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { Button } from "./ui/button";
 
 export default function AuthButton({ user }: { user: User | null }) {
   const supabase = createClientComponentClient();
@@ -19,20 +20,10 @@ export default function AuthButton({ user }: { user: User | null }) {
   };
 
   return user ? (
-    // Wenn der Nutzer angemeldet ist -> Logout-Button
-    <button
-      onClick={handleSignOut}
-      className="bg-red-500 text-white p-2 rounded"
-    >
+    <Button variant="destructive" onClick={handleSignOut}>
       Abmelden
-    </button>
+    </Button>
   ) : (
-    // Wenn der Nutzer abgemeldet ist -> Login-Button
-    <button
-      onClick={handleSignIn}
-      className="bg-blue-500 text-white p-2 rounded"
-    >
-      Anmelden
-    </button>
+    <Button onClick={handleSignIn}>Anmelden</Button>
   );
 }

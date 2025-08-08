@@ -3,7 +3,7 @@
 
 import { SWRConfig } from "swr";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"; // Importieren
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function SWRProvider({
   children,
@@ -11,7 +11,7 @@ export default function SWRProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const supabase = createClientComponentClient(); // Supabase Client hier instanziieren
+  const supabase = createClientComponentClient();
 
   return (
     <SWRConfig
@@ -29,12 +29,9 @@ export default function SWRProvider({
           return res.json();
         },
         onError: async (error, key) => {
-          // Prüfe, ob der Fehler den Status 401 hat
           if (error.status === 401) {
-            // 1. ZUERST den Nutzer ausloggen, um die ungültige Session zu löschen
             await supabase.auth.signOut();
 
-            // 2. DANN zur Login-Seite umleiten
             router.push("/login");
           }
         },

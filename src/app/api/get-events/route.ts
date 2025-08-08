@@ -25,7 +25,6 @@ export async function GET() {
     );
   }
 
-  // 1. Events von Google holen (wie bisher)
   const googleApiUrl = new URL(
     "https://www.googleapis.com/calendar/v3/calendars/primary/events"
   );
@@ -50,7 +49,6 @@ export async function GET() {
 
   const googleEvents: GoogleEvent[] = (await googleResponse.json()).items;
 
-  // 2. Events für die Datenbank aufbereiten
   const todosToUpsert = googleEvents.map((event) => ({
     user_id: session.user.id,
     google_event_id: event.id,
@@ -59,12 +57,11 @@ export async function GET() {
     end_time: event.end?.dateTime || event.end?.date,
   }));
 
-  // 3. Events in die Supabase-Tabelle schreiben (einfügen oder aktualisieren)
   if (todosToUpsert.length > 0) {
     const { error: upsertError } = await supabase
       .from("todos")
       .upsert(todosToUpsert, {
-        onConflict: "user_id, google_event_id", // Dies stellt sicher, dass bestehende Einträge aktualisiert werden
+        onConflict: "user_id, google_event_id",
       });
 
     if (upsertError) {
@@ -76,7 +73,6 @@ export async function GET() {
     }
   }
 
-  // 4. Gespeicherte Todos aus der Datenbank lesen und zurückgeben
   const { data: todos, error: selectError } = await supabase
     .from("todos")
     .select("*")
