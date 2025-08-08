@@ -1,4 +1,5 @@
 import { Todo } from "@/types";
+import { convertTodoData } from "./todoConverter";
 
 export async function fetchTodosFromApi(): Promise<Todo[]> {
   const response = await fetch("/api/get-events");
@@ -8,5 +9,6 @@ export async function fetchTodosFromApi(): Promise<Todo[]> {
   }
 
   const data: Todo[] = await response.json();
+  convertTodoData(data);
   return data;
 }

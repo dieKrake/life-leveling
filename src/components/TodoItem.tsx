@@ -17,7 +17,7 @@ export default function TodoItem({ todo }: { todo: Todo }) {
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
 
-    // Update the todo in local storage
+    // Update todos in local storage
     const todos = JSON.parse(localStorage.getItem("todos") || "[]");
     const updatedTodos = todos.map((t: Todo) => {
       if (t.id === todo.id) {

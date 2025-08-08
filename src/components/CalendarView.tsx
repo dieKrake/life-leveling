@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 import { fetchTodosFromApi } from "@/lib/todoService";
 import { Todo } from "@/types";
+import RefreshButton from "./RefreshButton";
 
 export default function CalendarView() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -14,17 +15,8 @@ export default function CalendarView() {
   useEffect(() => {
     const loadTodos = async () => {
       try {
-        const cachedTodos = localStorage.getItem("todos");
-        if (cachedTodos) {
-          setTodos(JSON.parse(cachedTodos));
-          setLoading(false);
-          return;
-        }
-
         const data = await fetchTodosFromApi();
         setTodos(data);
-
-        localStorage.setItem("todos", JSON.stringify(data));
       } catch (err) {
         setError(
           err instanceof Error
@@ -49,6 +41,7 @@ export default function CalendarView() {
 
   return (
     <div className="w-full max-w-2xl">
+      <RefreshButton />
       <h2 className="text-2xl font-semibold mb-4">
         Deine Aufgaben aus dem Kalender
       </h2>
