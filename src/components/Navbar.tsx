@@ -11,7 +11,7 @@ import NavUser from "./NavUser";
 export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b">
-      <div className="flex h-14 items-center justify-between">
+      <div className="flex h-14 items-center justify-between px-4">
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
