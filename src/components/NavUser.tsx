@@ -1,7 +1,7 @@
+// Der neue, vereinfachte NavUser.tsx
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
+import AuthButton from "./AuthButton"; // Importiere nur noch den neuen Button
 
 export default async function NavUser() {
   const supabase = createServerComponentClient({ cookies });
@@ -10,17 +10,12 @@ export default async function NavUser() {
   } = await supabase.auth.getUser();
 
   return (
-    <div>
-      {user ? (
-        <div className="flex flex-row gap-4 items-center h-full">
-          <p className="">{user.email}</p>
-          <LogoutButton />
-        </div>
-      ) : (
-        <div className="flex items-center h-full">
-          <LoginButton />
-        </div>
-      )}
+    <div className="flex flex-row gap-4 items-center h-full">
+      {/* Zeige die E-Mail nur an, wenn der Nutzer eingeloggt ist */}
+      {user && <p className="">{user.email}</p>}
+
+      {/* Der AuthButton entscheidet selbst, ob Login oder Logout angezeigt wird */}
+      <AuthButton user={user} />
     </div>
   );
 }

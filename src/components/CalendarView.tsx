@@ -1,51 +1,29 @@
 // src/components/CalendarView.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import TodoItem from "./TodoItem";
-import { fetchTodosFromApi } from "@/lib/todoService";
-import { Todo } from "@/types";
-import RefreshButton from "./RefreshButton";
+import type { Todo } from "@/types";
 
 export default function CalendarView() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // KEINE FETCHER-FUNKTION MEHR NÖTIG - SWR NUTZT DEN GLOBALEN
+  const { data: todos, error, isLoading } = useSWR<Todo[]>("/api/get-events"); // Nur der Key wird übergeben
 
-  useEffect(() => {
-    const loadTodos = async () => {
-      try {
-        const data = await fetchTodosFromApi();
-        setTodos(data);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Ein unbekannter Fehler ist aufgetreten"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTodos();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <p>Lade Todos...</p>;
   }
 
   if (error) {
-    return <p className="text-red-500">{error}</p>;
+    // Du kannst hier optional immer noch eine lokale Fehlermeldung anzeigen
+    return <p className="text-red-500">Fehler: {error.message}</p>;
   }
 
   return (
     <div className="w-full max-w-2xl">
-      <RefreshButton />
       <h2 className="text-2xl font-semibold mb-4">
         Deine Aufgaben aus dem Kalender
       </h2>
-      {todos.length > 0 ? (
+      {todos && todos.length > 0 ? (
         <ul className="space-y-3">
           {todos.map((todo) => (
             <TodoItem key={todo.id} todo={todo} />
