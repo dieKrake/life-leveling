@@ -32,7 +32,7 @@ export default function SWRProvider({
           if (error.status === 401) {
             await supabase.auth.signOut();
 
-            router.push("/login");
+            window.location.href = "/login";
           }
         },
       }}
