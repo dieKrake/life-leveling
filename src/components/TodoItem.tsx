@@ -7,11 +7,11 @@ import type { Todo } from "@/types";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { formatTodoDate } from "@/lib/dateUtils";
 
-// Wir erweitern die Props um eine Funktion, die nach einem Update aufgerufen wird
 type TodoItemProps = {
   todo: Todo;
-  onUpdate: () => void; // Diese Funktion löst die Neu-Validierung in SWR aus
+  onUpdate: () => void;
 };
 
 export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
@@ -32,9 +32,8 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
 
     if (error) {
       console.error("Fehler beim Aktualisieren des Todos:", error);
-      setIsChecked(!checked); // Bei Fehler zurücksetzen
+      setIsChecked(!checked);
     } else {
-      // Wenn das Update erfolgreich war, rufen wir die onUpdate-Funktion auf
       onUpdate();
     }
   };
@@ -42,20 +41,26 @@ export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
   const todoId = `todo-${todo.id}`;
 
   return (
-    <li className="flex items-center space-x-2 p-3 border rounded-md bg-card">
+    <li className="flex items-start space-x-3 p-3 border rounded-md bg-card">
       <Checkbox
         id={todoId}
         checked={isChecked}
         onCheckedChange={handleToggleComplete}
+        className="mt-1"
       />
-      <Label
-        htmlFor={todoId}
-        className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
-          isChecked ? "line-through text-muted-foreground" : ""
-        }`}
-      >
-        {todo.title}
-      </Label>
+      <div className="grid gap-1.5 leading-none">
+        <Label
+          htmlFor={todoId}
+          className={`text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+            isChecked ? "line-through text-muted-foreground" : ""
+          }`}
+        >
+          {todo.title}
+        </Label>
+        <p className="text-sm text-muted-foreground">
+          {formatTodoDate(todo.start_time, todo.end_time)}
+        </p>
+      </div>
     </li>
   );
 }
