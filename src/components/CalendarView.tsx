@@ -4,9 +4,28 @@
 import useSWR from "swr";
 import TodoItem from "./TodoItem";
 import type { Todo } from "@/types";
+import { useMemo } from "react"; // useMemo importieren
 
 export default function CalendarView() {
-  const { data: todos, error, isLoading } = useSWR<Todo[]>("/api/get-events");
+  // Wir holen uns die 'mutate'-Funktion von SWR.
+  // 'mutate' weist SWR an, die Daten neu vom Server zu laden.
+  const {
+    data: todos,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR<Todo[]>("/api/get-events");
+
+  // Wir filtern die Todos mit useMemo, um die Listen nur dann neu zu berechnen,
+  // wenn sich die 'todos'-Daten tatsächlich ändern.
+  const incompleteTodos = useMemo(
+    () => todos?.filter((todo) => !todo.is_completed) || [],
+    [todos]
+  );
+  const completedTodos = useMemo(
+    () => todos?.filter((todo) => todo.is_completed) || [],
+    [todos]
+  );
 
   if (isLoading) {
     return <p>Lade Todos...</p>;
@@ -17,19 +36,36 @@ export default function CalendarView() {
   }
 
   return (
-    <div className="w-full max-w-2xl">
-      <h2 className="text-2xl font-semibold mb-4">
-        Deine Aufgaben aus dem Kalender
-      </h2>
-      {todos && todos.length > 0 ? (
-        <ul className="space-y-3">
-          {todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} />
-          ))}
-        </ul>
-      ) : (
-        <p>Keine anstehenden Aufgaben gefunden.</p>
-      )}
+    <div className="flex flex-col md:flex-row gap-16 w-full px-4">
+      {/* Offene Aufgaben */}
+      <div className="w-full">
+        <h2 className="text-2xl font-semibold mb-4">Offene Aufgaben</h2>
+        {incompleteTodos.length > 0 ? (
+          <ul className="space-y-3">
+            {incompleteTodos.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} onUpdate={mutate} />
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted-foreground">
+            Super! Keine offenen Aufgaben.
+          </p>
+        )}
+      </div>
+
+      {/* Erledigte Aufgaben */}
+      <div className="w-full">
+        <h2 className="text-2xl font-semibold mb-4">Erledigte Aufgaben</h2>
+        {completedTodos.length > 0 ? (
+          <ul className="space-y-3">
+            {completedTodos.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} onUpdate={mutate} />
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted-foreground">Noch keine Aufgaben erledigt.</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -8,7 +8,13 @@ import type { Todo } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-export default function TodoItem({ todo }: { todo: Todo }) {
+// Wir erweitern die Props um eine Funktion, die nach einem Update aufgerufen wird
+type TodoItemProps = {
+  todo: Todo;
+  onUpdate: () => void; // Diese Funktion löst die Neu-Validierung in SWR aus
+};
+
+export default function TodoItem({ todo, onUpdate }: TodoItemProps) {
   const supabase = createClientComponentClient();
   const [isChecked, setIsChecked] = useState(todo.is_completed);
 
@@ -26,7 +32,10 @@ export default function TodoItem({ todo }: { todo: Todo }) {
 
     if (error) {
       console.error("Fehler beim Aktualisieren des Todos:", error);
-      setIsChecked(!checked);
+      setIsChecked(!checked); // Bei Fehler zurücksetzen
+    } else {
+      // Wenn das Update erfolgreich war, rufen wir die onUpdate-Funktion auf
+      onUpdate();
     }
   };
 
