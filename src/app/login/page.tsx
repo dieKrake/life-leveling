@@ -39,7 +39,8 @@ export default function LoginPage() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        scopes: "https://www.googleapis.com/auth/calendar profile email",
+        scopes:
+          "https://www.googleapis.com/auth/calendar profile email https://www.googleapis.com/auth/tasks.readonly",
         redirectTo: `${location.origin}/auth/callback`,
       },
     });
