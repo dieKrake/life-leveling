@@ -36,7 +36,7 @@ export default function CalendarView() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-16 w-full px-4">
+    <div className="flex flex-col md:flex-row gap-16 w-5/6">
       {/* Offene Aufgaben */}
       <div className="w-full">
         <h2 className="text-2xl font-semibold mb-4">Offene Aufgaben</h2>

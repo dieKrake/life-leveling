@@ -29,7 +29,7 @@ export async function GET() {
     "https://www.googleapis.com/calendar/v3/calendars/primary/events"
   );
   googleApiUrl.searchParams.append("timeMin", new Date().toISOString());
-  googleApiUrl.searchParams.append("maxResults", "50"); // Holen wir ein paar mehr
+  googleApiUrl.searchParams.append("maxResults", "50");
   googleApiUrl.searchParams.append("singleEvents", "true");
   googleApiUrl.searchParams.append("orderBy", "startTime");
 
